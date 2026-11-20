@@ -1,0 +1,47 @@
+# Despliegue: docker compose up -d --build
+# Variables en .env (ver .env.example)
+# Nombre fijo: contenedores, red y volúmenes siempre "cecom-store_*" (sin importar el nombre de la carpeta)
+name: cecom-store
+services:
+  api:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET en .env}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      TRUST_PROXY: ${TRUST_PROXY:-2}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-5}
+      MAX_VIDEO_MB: ${MAX_VIDEO_MB:-60}
+      MAX_QUOTE_FILE_MB: ${MAX_QUOTE_FILE_MB:-20}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_NAME: ${ADMIN_NAME:-Administrador CECOM}
+      ADMIN_PHONE: ${ADMIN_PHONE}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      OTP_PROVIDER: ${OTP_PROVIDER:-sms}
+      SMS_BASE_URL: ${SMS_BASE_URL:-https://apps-cecom.cloud/gw-sms}
+      SMS_APP_ID: ${SMS_APP_ID:-}
+      SMS_APP_SECRET: ${SMS_APP_SECRET:-}
+    volumes:
+      - cecom-data:/app/data        # base de datos SQLite
+      - cecom-uploads:/app/uploads  # fotos de productos
+    expose:
+      - "4000"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      # solo en localhost: el acceso público entra por Apache (https://apps-cecom.cloud/store/)
+      - "127.0.0.1:${PUBLIC_PORT:-8850}:80"
+
+volumes:
+  cecom-data:
+  cecom-uploads:
