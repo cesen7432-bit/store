@@ -54,7 +54,7 @@ async function send(phoneNational: string, code: string) {
         'Content-Type': 'application/json',
       },
       // sin tildes: el SMS se mantiene en codificación GSM (160 caracteres por mensaje)
-      body: JSON.stringify({ to, message: `CECOM: tu codigo de verificacion es ${code}. Vence en 5 minutos. No lo compartas.`, priority: 'high' }),
+      body: JSON.stringify({ to, message: `${code} es tu codigo CECOM. Vence en 5 min. No lo compartas con nadie.`, priority: 'high' }),
       signal: AbortSignal.timeout(10_000),
     })
     const body = (await res.json().catch(() => null)) as { code?: number; message?: string; detail?: string } | null
