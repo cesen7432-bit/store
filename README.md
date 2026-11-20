@@ -27,14 +27,14 @@ En el proxy **Apache** del VPS, dentro del `<VirtualHost>` de apps-cecom.cloud (
 
 ```apache
 <Location /store>
-    ProxyPass http://127.0.0.1:8850/store
-    ProxyPassReverse http://127.0.0.1:8850/store
+    ProxyPass http://127.0.0.1:8850
+    ProxyPassReverse http://127.0.0.1:8850
     # 80 MB: videos de proyectos y adjuntos de cotizaciones
     LimitRequestBody 83886080
 </Location>
 ```
 
-- Se mantiene el prefijo `/store` hacia el contenedor; la tienda, la API (`/store/api`) y las fotos (`/store/uploads`) van por ese mismo bloque.
+- La tienda, la API (`/store/api`) y las fotos (`/store/uploads`) van por ese mismo bloque. El contenedor acepta las rutas con o sin el prefijo `/store`.
 - El puerto `8850` es `PUBLIC_PORT` del `.env` (el 8080 lo usa `/isapi`). El contenedor solo escucha en `127.0.0.1`: el acceso público entra por Apache y su HTTPS.
 - `TRUST_PROXY=2` (Apache + Nginx del contenedor) para que el límite de intentos vea la IP real del cliente.
 - Los datos viven en los volúmenes `cecom-data` y `cecom-uploads`: **se conservan al reconstruir**. `docker compose down -v` los borra.
