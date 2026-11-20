@@ -26,6 +26,7 @@ const AdminCoupons = lazy(() => import('./admin/Catalog').then((m) => ({ default
 const AdminCustomers = lazy(() => import('./admin/Catalog').then((m) => ({ default: m.Customers })))
 const AdminSettings = lazy(() => import('./admin/Settings'))
 const AdminReviews = lazy(() => import('./admin/Reviews'))
+const AdminVisits = lazy(() => import('./admin/Visits'))
 
 function NotFound() {
   return (
@@ -66,6 +67,7 @@ export default function App() {
             </Route>
             <Route path="admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
+              <Route path="visitas" element={<AdminVisits />} />
               <Route path="productos" element={<AdminProducts />} />
               <Route path="pedidos" element={<AdminOrders />} />
               <Route path="cotizaciones" element={<AdminQuotes />} />

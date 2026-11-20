@@ -4,6 +4,7 @@ import Lenis from 'lenis'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { Intro } from '../brand/Intro'
+import { trackEvent } from '../../utils/analytics'
 import { CartDrawer } from '../product/CartDrawer'
 import { SeasonalParticles } from '../seasonal/SeasonalParticles'
 import { SeasonBanner } from '../seasonal/SeasonBanner'
@@ -14,6 +15,11 @@ export function Layout() {
   const location = useLocation()
   const { scrollYProgress } = useScroll()
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30 })
+
+  // analítica: cada página visitada de la tienda
+  useEffect(() => {
+    trackEvent('page', location.pathname)
+  }, [location.pathname])
 
   // Scroll suave (desactivado si el usuario prefiere menos movimiento)
   useEffect(() => {

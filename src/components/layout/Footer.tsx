@@ -115,6 +115,9 @@ export function Footer() {
 
       <div className="border-t border-white/5 pt-6 pb-24 text-center text-xs text-muted md:pb-6">
         © {new Date().getFullYear()} {STORE.name} · Hecho con ⚡ y mucho estaño
+        <p className="mx-auto mt-2 max-w-xl px-4 text-[11px] leading-relaxed text-muted/70">
+          Registramos las páginas y productos que visitas en esta tienda para mejorar el servicio. No usamos servicios de terceros ni guardamos tu dirección IP.
+        </p>
       </div>
 
       <a

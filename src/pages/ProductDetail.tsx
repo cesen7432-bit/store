@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronRight, Heart, MapPin, MessageCircle, Minus, Plus, ShoppingCart, Truck, Wand2 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import clsx from 'clsx'
@@ -14,6 +14,7 @@ import { api } from '../services/api'
 import { useCart } from '../store/cart'
 import { useAsync } from '../utils/useAsync'
 import type { Product } from '../types'
+import { trackEvent } from '../utils/analytics'
 
 export default function ProductDetail() {
   const { slug = '' } = useParams()
@@ -24,6 +25,11 @@ export default function ProductDetail() {
   const [note, setNote] = useState('')
   const [tab, setTab] = useState<'desc' | 'specs'>('desc')
   const { add, open, favorites, toggleFavorite } = useCart()
+
+  // analítica: producto visto
+  useEffect(() => {
+    if (product) trackEvent('product', `/producto/${product.slug}`, product.id)
+  }, [product])
 
   if (loading)
     return (

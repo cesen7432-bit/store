@@ -10,6 +10,8 @@
  */
 import type {
   AdminStats,
+  AnalyticsSummary,
+  VisitEvent,
   AuthSession,
   TwoFactorChallenge,
   Category,
@@ -81,6 +83,10 @@ export interface StoreApi {
   // Administración (requiere rol admin)
   admin: {
     stats(): Promise<AdminStats>
+    /** Visitas de los últimos `days` días */
+    analytics(days: number): Promise<AnalyticsSummary>
+    /** Recorrido de un visitante */
+    visitorEvents(visitorId: string): Promise<VisitEvent[]>
     saveProduct(p: Product): Promise<Product>
     deleteProduct(id: string): Promise<void>
     /** Importación masiva desde Excel; el SKU es la clave (actualiza o crea) */
@@ -115,6 +121,7 @@ let authToken: string | null = null
 export const setAuthToken = (t: string | null) => {
   authToken = t
 }
+export const getAuthToken = () => authToken
 
 // ───────────────────────── MOCK ─────────────────────────
 const delay = <T,>(value: T, ms = 250 + Math.random() * 300) =>
@@ -483,6 +490,14 @@ const mockApi: StoreApi = {
         }
       }),
 
+    analytics: (days) =>
+      run(() => {
+        requireAdmin()
+        return { days, visitors: 0, identifiedVisitors: 0, pageViews: 0, productViews: 0, addToCart: 0, byDay: [], topProducts: [], referrers: [], devices: [], recentVisitors: [] }
+      }),
+
+    visitorEvents: () => run(() => (requireAdmin(), [] as VisitEvent[])),
+
     saveProduct: (p) =>
       run(() => {
         requireAdmin()
@@ -678,6 +693,7 @@ const mockApi: StoreApi = {
 // ───────────────────────── HTTP (backend real) ─────────────────────────
 // la API vive junto a la tienda: /store/api (se puede cambiar con VITE_API_URL)
 const BASE_URL = import.meta.env.VITE_API_URL || `${import.meta.env.BASE_URL}api`
+export const API_BASE = BASE_URL
 
 async function http<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = { ...(init.headers as Record<string, string>) }
@@ -739,6 +755,8 @@ const httpApi: StoreApi = {
 
   admin: {
     stats: () => http('/admin/stats'),
+    analytics: (days) => http(`/admin/analytics?days=${days}`),
+    visitorEvents: (id) => http(`/admin/analytics/visitors/${encodeURIComponent(id)}`),
     saveProduct: (p) => (p.id ? http(`/admin/products/${p.id}`, put(p)) : http('/admin/products', post(p))),
     deleteProduct: (id) => http(`/admin/products/${id}`, del),
     importProducts: (items, updateExisting) => http('/admin/products/import', post({ items, updateExisting })),

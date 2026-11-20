@@ -60,6 +60,7 @@ En el proxy **Apache** del VPS, dentro del `<VirtualHost>` de apps-cecom.cloud (
 - **Cupones:** requieren sesión, un uso por cliente; `BIENVENIDA10` solo en la primera compra.
 - **Reseñas:** solo de productos recibidos; se publican cuando el admin las aprueba.
 - **Precios, descuentos y stock** se calculan siempre en el servidor.
+- **Visitas** (Admin → Visitas): páginas y productos vistos por visitante; los que tienen sesión aparecen con su nombre. No cuenta admins, bots ni navegadores con "Do Not Track"; no guarda IPs. Se borran a los 180 días (`ANALYTICS_RETENTION_DAYS` en `.env` para cambiarlo).
 
 ## Mantenimiento
 

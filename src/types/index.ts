@@ -278,3 +278,41 @@ export interface ProductImportResult {
   updated: number
   skipped: number
 }
+
+// ───────── Analítica de visitas (propia, sin terceros) ─────────
+export type VisitEventType = 'page' | 'product' | 'cart'
+
+export interface VisitEvent {
+  type: VisitEventType
+  path: string
+  productId?: string
+  productName?: string
+  referrer?: string
+  createdAt: string
+}
+
+export interface VisitorSummary {
+  visitorId: string
+  /** null = visitante anónimo (sin sesión) */
+  user: { id: string; name: string; email: string; phone: string } | null
+  firstSeen: string
+  lastSeen: string
+  pageViews: number
+  device: string
+  referrer?: string
+  products: { id: string; name: string; views: number; addedToCart: boolean }[]
+}
+
+export interface AnalyticsSummary {
+  days: number
+  visitors: number
+  identifiedVisitors: number
+  pageViews: number
+  productViews: number
+  addToCart: number
+  byDay: { date: string; visitors: number }[]
+  topProducts: { id: string; name: string; slug: string | null; views: number; visitors: number; addedToCart: number }[]
+  referrers: { source: string; visitors: number }[]
+  devices: { device: string; visitors: number }[]
+  recentVisitors: VisitorSummary[]
+}

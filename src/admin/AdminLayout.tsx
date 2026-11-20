@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ExternalLink, FileText, FolderKanban, LayoutDashboard, LogOut, Menu, MessageSquareText, Package, Settings, ShoppingBag, Tag, Users, X } from 'lucide-react'
+import { Activity, ExternalLink, FileText, FolderKanban, LayoutDashboard, LogOut, Menu, MessageSquareText, Package, Settings, ShoppingBag, Tag, Users, X } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
 import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Toaster } from 'sonner'
@@ -11,6 +11,7 @@ import { useAuth } from '../store/auth'
 
 const NAV = [
   { to: '/admin', label: 'Resumen', icon: LayoutDashboard, end: true },
+  { to: '/admin/visitas', label: 'Visitas', icon: Activity },
   { to: '/admin/productos', label: 'Productos', icon: Package },
   { to: '/admin/pedidos', label: 'Pedidos', icon: ShoppingBag },
   { to: '/admin/cotizaciones', label: 'Cotizaciones', icon: FileText },

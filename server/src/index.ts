@@ -5,12 +5,14 @@ import multer from 'multer'
 import { ZodError } from 'zod'
 import { HttpError } from './auth.js'
 import { config } from './config.js'
+import { analyticsRoutes, migrateAnalytics } from './analytics.js'
 import { adminRoutes } from './routes/admin.js'
 import { authRoutes } from './routes/auth.js'
 import { publicRoutes } from './routes/public.js'
 import { seed } from './seed.js'
 
 await seed()
+migrateAnalytics()
 
 const app = express()
 app.set('trust proxy', config.trustProxy) // detrás de Nginx: el límite de intentos ve la IP real del cliente
@@ -22,7 +24,7 @@ app.use(express.json({ limit: '200kb' }))
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true })
 })
-app.use('/api', publicRoutes, authRoutes, adminRoutes)
+app.use('/api', analyticsRoutes, publicRoutes, authRoutes, adminRoutes)
 app.use('/uploads', express.static(config.uploadsDir, { maxAge: '30d', immutable: true }))
 
 app.use('/api', (_req, res) => {

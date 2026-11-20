@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { CartItem, Coupon, Product } from '../types'
 import { isFreeShipping, SHIPPING, type ShippingZone } from '../config/store'
+import { trackEvent } from '../utils/analytics'
 
 interface CartState {
   items: CartItem[]
@@ -29,7 +30,8 @@ export const useCart = create<CartState>()(
       favorites: [],
       shippingZone: 'loja',
       setShippingZone: (shippingZone) => set({ shippingZone }),
-      add: (product, quantity = 1, note) =>
+      add: (product, quantity = 1, note) => {
+        trackEvent('cart', window.location.pathname, product.id)
         set((s) => {
           const existing = s.items.find((i) => i.product.id === product.id)
           const items = existing
@@ -38,7 +40,8 @@ export const useCart = create<CartState>()(
               )
             : [...s.items, { product, quantity, note }]
           return { items }
-        }),
+        })
+      },
       remove: (id) => set((s) => ({ items: s.items.filter((i) => i.product.id !== id) })),
       setQuantity: (id, quantity) =>
         set((s) => ({
